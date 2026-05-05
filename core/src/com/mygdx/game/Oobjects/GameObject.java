@@ -11,7 +11,7 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
 
 public class GameObject {
-    Body body;
+    public Body body;
     Texture texture;
 
     public int width;

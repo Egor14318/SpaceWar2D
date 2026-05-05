@@ -10,10 +10,10 @@ public class GameSession {
     long sessionStartTime;
 
 
-    public void StartGame() {
+    public void startGame() {
         sessionStartTime = TimeUtils.millis();
-        nextTrashSpawnTime = sessionStartTime + (long) (GameSettings.STARTING_TRASH_APPEARANCE_COOL_DOWN * getTrashPeriodCoolDown());
-
+        nextTrashSpawnTime = sessionStartTime + (long) (GameSettings.STARTING_TRASH_APPEARANCE_COOL_DOWN
+                * getTrashPeriodCoolDown());
     }
 
     public boolean shouldSpawnTrash() {
@@ -21,14 +21,11 @@ public class GameSession {
             nextTrashSpawnTime = TimeUtils.millis() + (long) (GameSettings.STARTING_TRASH_APPEARANCE_COOL_DOWN
                     * getTrashPeriodCoolDown());
             return true;
-
         }
         return false;
     }
 
     private float getTrashPeriodCoolDown() {
-        return (float) Math.exp(-0.001 * (TimeUtils.millis() - sessionStartTime) / 1000);
-
+        return (float) Math.exp(-0.001 * (TimeUtils.millis() - sessionStartTime + 1) / 1000);
     }
-
 }
