@@ -10,6 +10,7 @@ import com.mygdx.game.GameResources;
 import com.mygdx.game.GameSession;
 import com.mygdx.game.GameSettings;
 import com.mygdx.game.MyGdxGame;
+import com.mygdx.game.Oobjects.BulletObject;
 import com.mygdx.game.Oobjects.ShipObject;
 import com.mygdx.game.Oobjects.TrashObject;
 
@@ -20,6 +21,7 @@ public class GameScreen extends ScreenAdapter {
     MyGdxGame myGdxGame;
     ShipObject shipObject;
     ArrayList<TrashObject> trashArray;
+    ArrayList<BulletObject> bulletArray;
     GameSession gameSession;
 
 
@@ -27,6 +29,7 @@ public class GameScreen extends ScreenAdapter {
         this.myGdxGame = myGdxGame;
 
         trashArray = new ArrayList<>();
+        bulletArray = new ArrayList<>();
 
         shipObject = new ShipObject(
                 GameSettings.SCREEN_WIDTH / 2, 150,
@@ -49,8 +52,10 @@ public class GameScreen extends ScreenAdapter {
 
     @Override
     public void render(float delta) {
+
         myGdxGame.stepWorld();
         handleInput();
+
         if (gameSession.shouldSpawnTrash()) {
             TrashObject trashObject = new TrashObject(
                     GameSettings.TRASH_WIDTH, GameSettings.TRASH_HEIGHT,
@@ -60,6 +65,18 @@ public class GameScreen extends ScreenAdapter {
             trashArray.add(trashObject);
         }
 
+        if (shipObject.needToShoot()) {
+            BulletObject laserBullet = new BulletObject(
+                    shipObject.getX(), shipObject.getY() + shipObject.height / 2,
+                    GameSettings.BULLET_WIDTH, GameSettings.BULLET_HEIGHT,
+                    GameResources.BULLET_IMG_PATH,
+                    myGdxGame.world
+            );
+            bulletArray.add(laserBullet);
+        }
+
+        updateTrash();
+        updateBullets();
 
         draw();
     }
@@ -81,6 +98,7 @@ public class GameScreen extends ScreenAdapter {
         myGdxGame.batch.begin();
         shipObject.draw(myGdxGame.batch);
         for (TrashObject trash : trashArray) trash.draw(myGdxGame.batch);
+        for (BulletObject bullet : bulletArray) bullet.draw(myGdxGame.batch);
         myGdxGame.batch.end();
     }
     private void updateTrash() {
@@ -91,6 +109,16 @@ public class GameScreen extends ScreenAdapter {
             }
         }
     }
+    private void updateBullets() {
+        System.out.println("size: " + bulletArray.size());
+        for (int i = 0; i < bulletArray.size(); i++) {
+            if (bulletArray.get(i).hasToBeDestroyed()) {
+                myGdxGame.world.destroyBody(bulletArray.get(i).body);
+                bulletArray.remove(i--);
+            }
+        }
+    }
+
 }
 
 

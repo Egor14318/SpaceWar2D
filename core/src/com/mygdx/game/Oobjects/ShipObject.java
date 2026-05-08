@@ -10,39 +10,13 @@ import com.badlogic.gdx.utils.TimeUtils;
 import com.mygdx.game.GameSettings;
 
 public class ShipObject extends GameObject {
-    public ShipObject(int x, int y, int width, int height, String texturePath, World world) {
-        super(texturePath, x, y, width, height, world);
-    }
     long lastShotTime;
-    private void putInFrame() {
-        if (getY() > (GameSettings.SCREEN_HEIGHT / 2f - height / 2f)) {
-            setY(GameSettings.SCREEN_HEIGHT / 2 - height / 2);
+    int livesLeft;
 
-        }
-        if (getY() <= (height / 2)) {
-            setY(height / 2);
-
-        }
-        if (getX()>(GameSettings.SCREEN_WIDTH + width / 2f)){
-            setX(0);
-        }
-        if (getX()< (-width/2f)){
-            setX(GameSettings.SCREEN_WIDTH);
-        }
-    }
-
-
-    public void move(Vector3 vector3){
-        float fx = (vector3.x - getX()) * GameSettings.SHIP_FORCE_RATIO;
-        float fy = (vector3.y - getY()) * GameSettings.SHIP_FORCE_RATIO;
-        body.applyForceToCenter(
-                new Vector2(
-                        (vector3.x - getX()) * GameSettings.SHIP_FORCE_RATIO,
-                        (vector3.y - getY()) * GameSettings.SHIP_FORCE_RATIO
-                ),
-                true
-        );body.setLinearDamping(10);
-
+    public ShipObject(int x, int y, int width, int height, String texturePath, World world) {
+        super(texturePath, x, y, width, height, GameSettings.SHIP_BIT, world);
+        body.setLinearDamping(10);
+        livesLeft = 3;
     }
 
     @Override
@@ -50,6 +24,36 @@ public class ShipObject extends GameObject {
         putInFrame();
         super.draw(batch);
     }
+    @Override
+    public void hit() {
+        livesLeft -= 1;
+    }
+    public boolean isAlive() {
+        return livesLeft > 0;
+    }
+    public void move(Vector3 vector3) {
+        body.applyForceToCenter(new Vector2(
+                        (vector3.x - getX()) * GameSettings.SHIP_FORCE_RATIO,
+                        (vector3.y - getY()) * GameSettings.SHIP_FORCE_RATIO),
+                true
+        );
+    }
+
+    private void putInFrame() {
+        if (getY() > (GameSettings.SCREEN_HEIGHT / 2f - height / 2f)) {
+            setY((int) (GameSettings.SCREEN_HEIGHT / 2f - height / 2f));
+        }
+        if (getY() <= (height / 2f)) {
+            setY(height / 2);
+        }
+        if (getX() < (-width / 2f)) {
+            setX(GameSettings.SCREEN_WIDTH);
+        }
+        if (getX() > (GameSettings.SCREEN_WIDTH + width / 2f)) {
+            setX(0);
+        }
+    }
+
     public boolean needToShoot() {
         if (TimeUtils.millis() - lastShotTime >= GameSettings.SHOOTING_COOL_DOWN) {
             lastShotTime = TimeUtils.millis();
