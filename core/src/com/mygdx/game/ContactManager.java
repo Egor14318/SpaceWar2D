@@ -38,7 +38,6 @@ public class ContactManager {
 
                     }
                 }
-
                 // код, выполнияющийся в момент начала контакта
 
             @Override
