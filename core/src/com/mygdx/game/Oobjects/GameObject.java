@@ -48,7 +48,7 @@ public class GameObject {
         fixtureDef.filter.categoryBits = cBits;
 
 
-        body.createFixture(fixtureDef); // создаём fixture по описанному нами определению
+        // создаём fixture по описанному нами определению
         Fixture fixture = body.createFixture(fixtureDef);
         fixture.setUserData(this);
 
