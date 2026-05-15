@@ -10,7 +10,6 @@ import java.util.Random;
 public class TrashObject extends GameObject {
 
     private int livesLeft;
-    Boolean wasHit;
     private static final int paddingHorizontal = 30;
 
     public TrashObject(int width, int height, String texturePath, World world) {

@@ -1,7 +1,5 @@
 package com.mygdx.game.Oobjects;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
@@ -18,7 +16,9 @@ public class ShipObject extends GameObject {
         body.setLinearDamping(10);
         livesLeft = 3;
     }
-
+    public int getLiveLeft(){
+        return livesLeft;
+    }
     @Override
     public void draw(SpriteBatch batch) {
         putInFrame();

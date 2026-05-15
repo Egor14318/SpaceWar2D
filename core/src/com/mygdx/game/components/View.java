@@ -5,7 +5,7 @@ import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Disposable;
 
-public class View implements Disposable {
+public abstract class View implements Disposable {
 
     float x;
     float y;
@@ -35,4 +35,6 @@ public class View implements Disposable {
     @Override
     public void dispose() {
     }
+
+
 }

@@ -3,18 +3,22 @@ package com.mygdx.game.screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.mygdx.game.ContactManager;
 import com.mygdx.game.GameResources;
 import com.mygdx.game.GameSession;
 import com.mygdx.game.GameSettings;
+import com.mygdx.game.components.ButtonView;
 import com.mygdx.game.components.ImageView;
+import com.mygdx.game.components.LiveView;
 import com.mygdx.game.components.MovingBackgroundView;
 import com.mygdx.game.MyGdxGame;
 import com.mygdx.game.Oobjects.BulletObject;
 import com.mygdx.game.Oobjects.ShipObject;
 import com.mygdx.game.Oobjects.TrashObject;
+import com.mygdx.game.components.TextView;
 
 import java.util.ArrayList;
 
@@ -28,16 +32,22 @@ public class GameScreen extends ScreenAdapter {
     MovingBackgroundView backgroundView;
     ContactManager contactManager;
     ImageView topBlackoutView;
+    TextView scoreTextView;
+
+    LiveView liveView;
+    ButtonView pauseButton;
 
 
     public GameScreen(MyGdxGame myGdxGame) {
         this.myGdxGame = myGdxGame;
         gameSession = new GameSession();
-
+        liveView = new LiveView(305, 1215);
+        pauseButton = new ButtonView(605, 1200, 46, 54, GameResources.PAUSE_IMG_PATH);
         contactManager = new ContactManager(myGdxGame.world);
-        topBlackoutView = new ImageView(0, 1180, GameResources.BLACKOUT_TOP_IMG_PATH); dsadasdasa
+        topBlackoutView = new ImageView(0, 1180, GameResources.BLACKOUT_TOP_IMG_PATH);
         trashArray = new ArrayList<>();
         bulletArray = new ArrayList<>();
+        scoreTextView = new TextView(myGdxGame.commonWhiteFont, 50, 1215);
 
         backgroundView = new MovingBackgroundView(GameResources.BACKGROUND_IMG_PATH);
 
@@ -76,6 +86,8 @@ public class GameScreen extends ScreenAdapter {
             trashArray.add(trashObject);
         }
         backgroundView.move();
+        liveView.setLeftLives(shipObject.getLiveLeft());
+        scoreTextView.setText("Score: " + 100);
         if (shipObject.needToShoot()) {
             BulletObject laserBullet = new BulletObject(
                     shipObject.getX(), shipObject.getY() + shipObject.height / 2,
@@ -112,13 +124,17 @@ public class GameScreen extends ScreenAdapter {
         for (TrashObject trash : trashArray) trash.draw(myGdxGame.batch);
         shipObject.draw(myGdxGame.batch);
         for (BulletObject bullet : bulletArray) bullet.draw(myGdxGame.batch);
-        topBlackoutView.draw(myGdxGame.batch);dasdasdas
+        topBlackoutView.draw(myGdxGame.batch);
+        liveView.draw(myGdxGame.batch);
+        scoreTextView.draw(myGdxGame.batch);
+        pauseButton.draw(myGdxGame.batch);
+
         myGdxGame.batch.end();
     }
 
     private void updateTrash() {
         for (int i = 0; i < trashArray.size(); i++) {
-            if (!trashArray.get(i).isInFrame()) {
+            if (!trashArray.get(i).isInFrame()|| !trashArray.get(i).isAlive()) {
                 myGdxGame.world.destroyBody(trashArray.get(i).body);
                 trashArray.remove(i--);
             }
